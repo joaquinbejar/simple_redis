@@ -2,31 +2,46 @@
 // Created by Joaquin Bejar Garcia on 15/2/23.
 //
 
-#include <simple_config/config.h>
+//#include <simple_config/config.h>
 #include <catch2/catch_test_macros.hpp>
-//#include <simple_redis/redis.h>
 #include <simple_redis/config.h>
 
+simple_redis::RedisConfig default_config;
 
 TEST_CASE("Declare RedisConfig", "[RedisDB]") {
-    unsetenv("REDIS_HOSTNAME");
-    unsetenv("REDIS_PORT");
-    simple_redis::RedisConfig config;
-    REQUIRE(config.to_string() ==
+
+    REQUIRE(default_config.to_string() ==
             R"({"RedisConfig":{"connect_timeout":30000,"connection_idle_time":0,"connection_lifetime":0,"db":0,"host":"localhost","keep_alive":true,"loglevel":"info","password":"password","port":6379,"size":1000,"socket_timeout":30000,"tag":"tag","wait_timeout":30000}})");
 }
 
-TEST_CASE("Declare RedisConfig use HOST", "[RedisDB]") {
+struct RedisEnvFixtureHostname {
+    RedisEnvFixtureHostname() {
+        setenv("REDIS_HOSTNAME", "other", 1);
+    }
+
+    ~RedisEnvFixtureHostname() {
+        unsetenv("REDIS_HOSTNAME");
+    }
+};
+
+TEST_CASE_METHOD(RedisEnvFixtureHostname, "Declare RedisConfig use HOST", "[RedisDB]") {
     setenv("REDIS_HOSTNAME", "other", 1);
-    unsetenv("REDIS_PORT");
     simple_redis::RedisConfig config;
     REQUIRE(config.to_string() ==
             R"({"RedisConfig":{"connect_timeout":30000,"connection_idle_time":0,"connection_lifetime":0,"db":0,"host":"other","keep_alive":true,"loglevel":"info","password":"password","port":6379,"size":1000,"socket_timeout":30000,"tag":"tag","wait_timeout":30000}})");
 }
 
-TEST_CASE("Declare RedisConfig use HOSTS", "[RedisDB]") {
-    setenv("REDIS_HOSTNAME", "other1,other2,other3", 1);
-    unsetenv("REDIS_PORT");
+struct RedisEnvFixtureHostnames {
+    RedisEnvFixtureHostnames() {
+        setenv("REDIS_HOSTNAME", "other1,other2,other3", 1);
+    }
+
+    ~RedisEnvFixtureHostnames() {
+        unsetenv("REDIS_HOSTNAME");
+    }
+};
+
+TEST_CASE_METHOD(RedisEnvFixtureHostnames, "Declare RedisConfig use HOSTS", "[RedisDB]") {
     simple_redis::RedisConfig config;
     std::string expected1 = R"({"RedisConfig":{"connect_timeout":30000,"connection_idle_time":0,"connection_lifetime":0,"db":0,"host":"other1","keep_alive":true,"loglevel":"info","password":"password","port":6379,"size":1000,"socket_timeout":30000,"tag":"tag","wait_timeout":30000}})";
     std::string expected2 = R"({"RedisConfig":{"connect_timeout":30000,"connection_idle_time":0,"connection_lifetime":0,"db":0,"host":"other2","keep_alive":true,"loglevel":"info","password":"password","port":6379,"size":1000,"socket_timeout":30000,"tag":"tag","wait_timeout":30000}})";
@@ -34,90 +49,101 @@ TEST_CASE("Declare RedisConfig use HOSTS", "[RedisDB]") {
     REQUIRE((config.to_string() == expected1 || config.to_string() == expected2 || config.to_string() == expected3));
 }
 
-TEST_CASE("RedisConfig use to_string", "[RedisDB]") {
-    setenv("REDIS_HOSTNAME", "localhost", 1);
-    setenv("REDIS_PORT", "3306", 1);
-    setenv("REDIS_DATABASE", "database", 1);
+struct RedisEnvFixtureHostnamePortDatabase {
+    RedisEnvFixtureHostnamePortDatabase() {
+        setenv("REDIS_HOSTNAME", "localhost", 1);
+        setenv("REDIS_PORT", "3306", 1);
+        setenv("REDIS_DATABASE", "database", 1);
+    }
+
+    ~RedisEnvFixtureHostnamePortDatabase() {
+        unsetenv("REDIS_HOSTNAME");
+        unsetenv("REDIS_PORT");
+        unsetenv("REDIS_DATABASE");
+    }
+};
+
+TEST_CASE_METHOD(RedisEnvFixtureHostnamePortDatabase, "RedisConfig use to_string", "[RedisDB]") {
     simple_redis::RedisConfig config;
     REQUIRE(config.to_string() ==
             R"({"RedisConfig":{"connect_timeout":30000,"connection_idle_time":0,"connection_lifetime":0,"db":0,"host":"localhost","keep_alive":true,"loglevel":"info","password":"password","port":3306,"size":1000,"socket_timeout":30000,"tag":"tag","wait_timeout":30000}})");
 }
 
-TEST_CASE("RedisConfig use to_string port", "[RedisDB]") {
+struct RedisEnvFixturePort {
+    RedisEnvFixturePort() {
+        setenv("REDIS_PORT", "3333", 1);
+    }
+
+    ~RedisEnvFixturePort() {
+        unsetenv("REDIS_PORT");
+    }
+};
+
+TEST_CASE_METHOD(RedisEnvFixturePort, "RedisConfig use to_string port", "[RedisDB]") {
     setenv("REDIS_PORT", "3333", 1);
-    unsetenv("REDIS_HOSTNAME");
     simple_redis::RedisConfig config;
     REQUIRE(config.to_string() ==
             R"({"RedisConfig":{"connect_timeout":30000,"connection_idle_time":0,"connection_lifetime":0,"db":0,"host":"localhost","keep_alive":true,"loglevel":"info","password":"password","port":3333,"size":1000,"socket_timeout":30000,"tag":"tag","wait_timeout":30000}})");
 }
 
 TEST_CASE("RedisConfig validate", "[RedisDB]") {
-    simple_redis::RedisConfig config;
-    REQUIRE(config.validate());
+    REQUIRE(default_config.validate());
 }
 
-TEST_CASE("RedisConfig validate wrong 1", "[RedisDB]") {
-    setenv("REDIS_TAG", "", 1);
+struct RedisEnvFixtureTag {
+    RedisEnvFixtureTag() {
+        setenv("REDIS_TAG", "", 1);
+    }
+
+    ~RedisEnvFixtureTag() {
+        unsetenv("REDIS_TAG");
+    }
+};
+
+TEST_CASE_METHOD(RedisEnvFixtureTag, "RedisConfig validate wrong 1", "[RedisDB]") {
     simple_redis::RedisConfig config;
     REQUIRE_FALSE(config.validate());
     unsetenv("REDIS_TAG");
 }
 
-TEST_CASE("RedisConfig validate wrong 2", "[RedisDB]") {
-    setenv("REDIS_PORT", "1111111", 1);
+struct RedisEnvFixtureWrongPort {
+    RedisEnvFixtureWrongPort() {
+        setenv("REDIS_PORT", "1111111", 1);
+    }
+
+    ~RedisEnvFixtureWrongPort() {
+        unsetenv("REDIS_PORT");
+    }
+};
+
+TEST_CASE_METHOD(RedisEnvFixtureWrongPort, "RedisConfig validate wrong 2", "[RedisDB]") {
+
     simple_redis::RedisConfig config;
     REQUIRE_FALSE(config.validate());
     unsetenv("REDIS_PORT");
 }
 
-TEST_CASE("RedisConfig validate wrong 3", "[RedisDB]") {
-    setenv("REDIS_CONNECT_TIMEOUT", "-10", 1);
+struct RedisEnvFixtureWrongTimeout {
+    RedisEnvFixtureWrongTimeout() {
+        setenv("REDIS_CONNECT_TIMEOUT", "-10", 1);
+    }
+
+    ~RedisEnvFixtureWrongTimeout() {
+        unsetenv("REDIS_CONNECT_TIMEOUT");
+    }
+};
+
+TEST_CASE_METHOD(RedisEnvFixtureWrongTimeout,"RedisConfig validate wrong 3", "[RedisDB]") {
     simple_redis::RedisConfig config;
     REQUIRE_FALSE(config.validate());
     unsetenv("REDIS_CONNECT_TIMEOUT");
 }
 
-TEST_CASE("RedisConfig check is_moved", "[RedisDB]") {
-    setenv("REDIS_HOSTNAME", "localhost", 1);
-    setenv("REDIS_PORT", "3333", 1);
-    simple_redis::RedisConfig obj1;
-    REQUIRE_FALSE(obj1.is_moved());
-    simple_redis::RedisConfig obj4(std::move(obj1));
-    REQUIRE(obj1.is_moved());
-}
 
-TEST_CASE("Declare RedisConfig rule of 5", "[RedisDB]") {
-    setenv("REDIS_HOSTNAME", "localhost", 1);
-    setenv("REDIS_PORT", "3333", 1);
-    simple_redis::RedisConfig obj1;
-    REQUIRE(obj1.validate());
-    simple_redis::RedisConfig obj2(obj1);
-    REQUIRE(obj2.validate());
-    simple_redis::RedisConfig obj3 = obj1;
-    REQUIRE(obj1.validate());
-    REQUIRE(obj3.validate());
-    simple_redis::RedisConfig obj4(std::move(obj1));
-    REQUIRE(obj4.validate());
-    REQUIRE_FALSE(obj1.validate());
-    simple_redis::RedisConfig obj5 = std::move(obj2);
-    REQUIRE(obj5.validate());
-    REQUIRE_FALSE(obj2.validate());
-    REQUIRE(obj5.to_string() ==
-            R"({"RedisConfig":{"connect_timeout":30000,"connection_idle_time":0,"connection_lifetime":0,"db":0,"host":"localhost","keep_alive":true,"loglevel":"info","password":"password","port":3333,"size":1000,"socket_timeout":30000,"tag":"tag","wait_timeout":30000}})");
-    REQUIRE(obj4.to_string() ==
-            R"({"RedisConfig":{"connect_timeout":30000,"connection_idle_time":0,"connection_lifetime":0,"db":0,"host":"localhost","keep_alive":true,"loglevel":"info","password":"password","port":3333,"size":1000,"socket_timeout":30000,"tag":"tag","wait_timeout":30000}})");
-    REQUIRE(obj3.to_string() ==
-            R"({"RedisConfig":{"connect_timeout":30000,"connection_idle_time":0,"connection_lifetime":0,"db":0,"host":"localhost","keep_alive":true,"loglevel":"info","password":"password","port":3333,"size":1000,"socket_timeout":30000,"tag":"tag","wait_timeout":30000}})");
-    REQUIRE(obj5.logger == obj4.logger);
-    REQUIRE(obj5.logger == obj3.logger);
-}
-
-TEST_CASE("RedisConfig to json", "[RedisDB]") {
-    unsetenv("LOGLEVEL");
-    simple_redis::RedisConfig config;
-    json j = config.to_json();
+TEST_CASE( "RedisConfig to json", "[RedisDB]") {
+    json j = default_config.to_json();
     REQUIRE(j["host"] == "localhost");
-    REQUIRE(j["port"] == 3333);
+    REQUIRE(j["port"] == 6379);
     REQUIRE(j["db"] == 0);
     REQUIRE(j["password"] == "password");
     REQUIRE(j["size"] == 1000);
@@ -131,16 +157,6 @@ TEST_CASE("RedisConfig to json", "[RedisDB]") {
     REQUIRE(j["loglevel"] == "info");
 }
 
-TEST_CASE("RedisConfig from json", "[RedisDB]") {
-    unsetenv("LOGLEVEL");
-    simple_redis::RedisConfig config;
-    json j = config.to_json();
-    simple_redis::RedisConfig config2(j);
-    REQUIRE(config == config2);
-    simple_redis::RedisConfig config3;
-    config3.from_json(j);
-    REQUIRE(config == config3);
-}
 
 TEST_CASE("ConnectionOptions instantiate", "[RedisDB]") {
     simple_redis::ClusterConnectionOptions options;

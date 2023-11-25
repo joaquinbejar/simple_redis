@@ -2,13 +2,13 @@
 // Created by Joaquin Bejar Garcia on 2/3/23.
 //
 
-#include "hash.h"
+#include "simple_redis/hash.h"
 
 namespace simple_redis {
 
 
     HashRedisClient::HashRedisClient(RedisConfig &config) : RedisClient(config) {
-        this->m_config.logger.log_debug("HashRedisClient constructor");
+        this->m_config.logger->send<simple_logger::LogLevel::DEBUG>("HashRedisClient constructor");
     }
 
     bool HashRedisClient::set(std::string &key, std::map<std::string, std::string> &value) {
@@ -18,7 +18,7 @@ namespace simple_redis {
             return this->m_server_write->hset(set_tag(m_config.connection_options->tag, key), value.begin(),
                                               value.end());
         } catch (const std::exception &e) {
-            this->m_config.logger.log_error("RedisDB HSET failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB HSET failed: " + std::string(e.what()));
         }
         return false;
     }
@@ -29,7 +29,7 @@ namespace simple_redis {
         try {
             return this->m_server_write->hset(set_tag(m_config.connection_options->tag, hash_key), key, value);
         } catch (const std::exception &e) {
-            this->m_config.logger.log_error("RedisDB HSET failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB HSET failed: " + std::string(e.what()));
         }
         return false;
     }
@@ -45,7 +45,7 @@ namespace simple_redis {
             auto result = this->m_server_read->hget(set_tag(m_config.connection_options->tag, hash_key), key);
             return result.value_or(std::string());
         } catch (const std::exception &e) {
-            this->m_config.logger.log_error("RedisDB HGET failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB HGET failed: " + std::string(e.what()));
         }
         return {};
     }
@@ -59,7 +59,7 @@ namespace simple_redis {
                                          std::inserter(result, result.end()));
             return result;
         } catch (const std::exception &e) {
-            this->m_config.logger.log_error("RedisDB HGETALL failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB HGETALL failed: " + std::string(e.what()));
         }
         return {};
     }
@@ -72,7 +72,7 @@ namespace simple_redis {
             this->m_server_read->hkeys(set_tag(m_config.connection_options->tag, hash_key), std::back_inserter(result));
             return result;
         } catch (const std::exception &e) {
-            this->m_config.logger.log_error("RedisDB HKEYS failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB HKEYS failed: " + std::string(e.what()));
         }
         return {};
     }
@@ -83,7 +83,7 @@ namespace simple_redis {
         try {
             return this->m_server_write->hdel(set_tag(m_config.connection_options->tag, hash_key), key);
         } catch (const std::exception &e) {
-            this->m_config.logger.log_error("RedisDB HDEL failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB HDEL failed: " + std::string(e.what()));
         }
         return false;
     }

@@ -5,11 +5,14 @@
 #ifndef CPP_REDIS_BASE_CLIENT_H
 #define CPP_REDIS_BASE_CLIENT_H
 
+#include <hiredis/hiredis.h>
+#include <hiredis.h>
 #include <nlohmann/json.hpp>
 #include <sw/redis++/redis++.h>
 #include <simple_redis/config.h>
 #include <set>
-#include <simple_common/common.h>
+#include <common/common.h>
+#include <common/ip.h>
 #include <future>
 
 
@@ -30,26 +33,26 @@ namespace simple_redis {
         // Constructor
         explicit RedisClient(RedisConfig &config);
 
-        // Destructor
-        ~RedisClient();
-
-        // Copy constructor
-        RedisClient(const RedisClient &other);
-
-        // Move constructor
-        RedisClient(RedisClient &&other) noexcept;
-
-        // Copy assignment operator
-        RedisClient &operator=(const RedisClient &other);
-
-        // Move assignment operator
-        RedisClient &operator=(RedisClient &&other) noexcept;
-
-        // Equality operator
-        bool operator==(const RedisClient &rhs) const;
-
-        // Inequality operator
-        bool operator!=(const RedisClient &rhs) const;
+//        // Destructor
+//        ~RedisClient();
+//
+//        // Copy constructor
+//        RedisClient(const RedisClient &other);
+//
+//        // Move constructor
+//        RedisClient(RedisClient &&other) noexcept;
+//
+//        // Copy assignment operator
+//        RedisClient &operator=(const RedisClient &other);
+//
+//        // Move assignment operator
+//        RedisClient &operator=(RedisClient &&other) noexcept;
+//
+//        // Equality operator
+//        bool operator==(const RedisClient &rhs) const;
+//
+//        // Inequality operator
+//        bool operator!=(const RedisClient &rhs) const;
 
         bool is_connected();
 

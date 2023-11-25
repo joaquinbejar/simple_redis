@@ -2,8 +2,8 @@
 // Created by Joaquin Bejar Garcia on 2/3/23.
 //
 
-#ifndef CPP_REDIS_BASE_CONFIG_H
-#define CPP_REDIS_BASE_CONFIG_H
+#ifndef SIMPLE_REDIS_CONFIG_H
+#define SIMPLE_REDIS_CONFIG_H
 
 #include <nlohmann/json.hpp>
 #include <simple_logger/logger.h>
@@ -13,27 +13,12 @@
 
 namespace simple_redis {
 
-    using json = nlohmann::json;
+//    using json = nlohmann::json;
 
     class RedisConfig : public simple_config::Config {
+    private:
+        static ClusterConnectionOptions m_set_connection_options();
     public:
-        RedisConfig();
-
-        RedisConfig(const RedisConfig &other);
-
-        RedisConfig(RedisConfig &&other) noexcept;
-
-        explicit RedisConfig(const json &j);
-
-        // Copy assignment operator
-        RedisConfig &operator=(const RedisConfig &other);
-
-        // Move assignment operator
-        RedisConfig &operator=(RedisConfig &&other) noexcept;
-
-        bool operator==(const RedisConfig &rhs) const;
-
-        bool operator!=(const RedisConfig &rhs) const;
 
         [[maybe_unused]] [[nodiscard]] bool validate() override;
 
@@ -43,14 +28,13 @@ namespace simple_redis {
 
         void from_json(const json &j) override;
 
+        std::shared_ptr<simple_logger::Logger> logger = std::make_shared<simple_logger::Logger>(loglevel);
+        std::shared_ptr<ClusterConnectionOptions> connection_options = std::make_shared<ClusterConnectionOptions>(
+                m_set_connection_options());
 
-        simple_logger::Logger logger = simple_logger::Logger(this->loglevel);
-        std::shared_ptr<ClusterConnectionOptions> connection_options = m_set_connection_options();
 
-    private:
 
-        static std::shared_ptr<ClusterConnectionOptions> m_set_connection_options();
 
     };
 }
-#endif //CPP_REDIS_BASE_CONFIG_H
+#endif //SIMPLE_REDIS_CONFIG_H

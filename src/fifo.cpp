@@ -2,12 +2,12 @@
 // Created by Joaquin Bejar Garcia on 2/3/23.
 //
 
-#include "fifo.h"
+#include "simple_redis/fifo.h"
 
 namespace simple_redis {
 
     FIFORedisClient::FIFORedisClient(RedisConfig &config) : RedisClient(config) {
-        this->m_config.logger.log_debug("FIFORedisClient constructor");
+        this->m_config.logger->send<simple_logger::LogLevel::DEBUG>("FIFORedisClient constructor");
     }
 
     bool FIFORedisClient::set(const std::string &key, const std::string &value) {
@@ -16,7 +16,7 @@ namespace simple_redis {
         try {
             return this->m_server_write->rpush(set_tag(m_config.connection_options->tag, key), value);
         } catch (const std::exception &e) {
-            this->m_config.logger.log_error("RedisDB RPUSH failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB RPUSH failed: " + std::string(e.what()));
         }
         return false;
     }
@@ -32,7 +32,7 @@ namespace simple_redis {
             return this->m_server_write->rpush(set_tag(m_config.connection_options->tag, key), value.begin(),
                                                value.end());
         } catch (const std::exception &e) {
-            this->m_config.logger.log_error("RedisDB RPUSH failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB RPUSH failed: " + std::string(e.what()));
         }
         return false;
     }
@@ -51,7 +51,7 @@ namespace simple_redis {
                     this->m_config.connection_options->blocking_timeout);
             return result->second;
         } catch (const std::exception &e) {
-            this->m_config.logger.log_error("RedisDB BLPOP failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB BLPOP failed: " + std::string(e.what()));
         }
         return {};
     }
@@ -77,7 +77,7 @@ namespace simple_redis {
             }
             return v_result;
         } catch (const std::exception &e) {
-            this->m_config.logger.log_error("RedisDB BLPOP failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB BLPOP failed: " + std::string(e.what()));
         }
         return {};
     }
@@ -94,7 +94,7 @@ namespace simple_redis {
                     set_tag(m_config.connection_options->tag, key));
             return result ? *result : "";
         } catch (const std::exception &e) {
-            this->m_config.logger.log_error("RedisDB LPOP failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB LPOP failed: " + std::string(e.what()));
         }
         return {};
     }
@@ -118,7 +118,7 @@ namespace simple_redis {
             }
             return v_result;
         } catch (const std::exception &e) {
-            this->m_config.logger.log_error("RedisDB LPOP failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB LPOP failed: " + std::string(e.what()));
         }
         return {};
     }
@@ -133,7 +133,7 @@ namespace simple_redis {
         try {
             return this->m_server_read->llen(set_tag(m_config.connection_options->tag, key));
         } catch (const std::exception &e) {
-            this->m_config.logger.log_error("RedisDB LLEN failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB LLEN failed: " + std::string(e.what()));
         }
         return 0;
     }

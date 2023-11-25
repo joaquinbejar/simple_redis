@@ -2,12 +2,12 @@
 // Created by Joaquin Bejar Garcia on 2/3/23.
 //
 
-#include "lifo.h"
+#include "simple_redis/lifo.h"
 
 namespace simple_redis {
 
     LIFORedisClient::LIFORedisClient(RedisConfig &config) : FIFORedisClient(config) {
-        this->m_config.logger.log_debug("LIFORedisClient constructor");
+        this->m_config.logger->send<simple_logger::LogLevel::DEBUG>("LIFORedisClient constructor");
     }
 
     std::string LIFORedisClient::get(const std::string &key) {
@@ -20,7 +20,7 @@ namespace simple_redis {
                     this->m_config.connection_options->blocking_timeout);
             return result->second;
         } catch (const std::exception &e) {
-            this->m_config.logger.log_error("RedisDB BRPOP failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB BRPOP failed: " + std::string(e.what()));
         }
         return {};
     }
@@ -46,7 +46,7 @@ namespace simple_redis {
             }
             return v_result;
         } catch (const std::exception &e) {
-            this->m_config.logger.log_error("RedisDB BRMPOP failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB BRMPOP failed: " + std::string(e.what()));
         }
         return {};
     }
@@ -63,7 +63,7 @@ namespace simple_redis {
                     set_tag(m_config.connection_options->tag, key));
             return result ? *result : "";
         } catch (const std::exception &e) {
-            this->m_config.logger.log_error("RedisDB RPOP failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB RPOP failed: " + std::string(e.what()));
         }
         return {};
     }
@@ -88,7 +88,7 @@ namespace simple_redis {
             }
             return v_result;
         } catch (const std::exception &e) {
-            this->m_config.logger.log_error("RedisDB RPOP failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB RPOP failed: " + std::string(e.what()));
         }
         return {};
     }

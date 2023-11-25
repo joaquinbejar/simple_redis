@@ -2,7 +2,7 @@
 // Created by Joaquin Bejar Garcia on 2/3/23.
 //
 
-#include "basic.h"
+#include "simple_redis/basic.h"
 
 namespace simple_redis {
     std::string get_node_from_string(const std::string &nodes, char delimiter) {
