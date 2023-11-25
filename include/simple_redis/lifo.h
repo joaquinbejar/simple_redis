@@ -2,8 +2,8 @@
 // Created by Joaquin Bejar Garcia on 2/3/23.
 //
 
-#ifndef CPP_REDIS_BASE_LIFO_H
-#define CPP_REDIS_BASE_LIFO_H
+#ifndef SIMPLE_REDIS_LIFO_H
+#define SIMPLE_REDIS_LIFO_H
 
 #include <simple_redis/fifo.h>
 
@@ -33,4 +33,4 @@ namespace simple_redis {
         std::vector<std::string> nb_get(const std::string &&key, long size) override;
     };
 }
-#endif //CPP_REDIS_BASE_LIFO_H
+#endif //SIMPLE_REDIS_LIFO_H

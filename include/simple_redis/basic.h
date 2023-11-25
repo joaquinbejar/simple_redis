@@ -2,8 +2,8 @@
 // Created by Joaquin Bejar Garcia on 2/3/23.
 //
 
-#ifndef CPP_REDIS_BASE_BASIC_H
-#define CPP_REDIS_BASE_BASIC_H
+#ifndef SIMPLE_REDIS_BASIC_H
+#define SIMPLE_REDIS_BASIC_H
 
 #include <nlohmann/json.hpp>
 #include <sw/redis++/redis++.h>
@@ -45,4 +45,4 @@ namespace simple_redis {
         bool operator!=(const ClusterConnectionOptions &rhs) const;
     };
 }
-#endif //CPP_REDIS_BASE_BASIC_H
+#endif //SIMPLE_REDIS_BASIC_H

@@ -2,8 +2,8 @@
 // Created by Joaquin Bejar Garcia on 2/3/23.
 //
 
-#ifndef CPP_REDIS_BASE_FIFO_H
-#define CPP_REDIS_BASE_FIFO_H
+#ifndef SIMPLE_REDIS_FIFO_H
+#define SIMPLE_REDIS_FIFO_H
 
 #include <simple_redis/client.h>
 
@@ -46,4 +46,4 @@ namespace simple_redis {
 
     };
 }
-#endif //CPP_REDIS_BASE_FIFO_H
+#endif //SIMPLE_REDIS_FIFO_H

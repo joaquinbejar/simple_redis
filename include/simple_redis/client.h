@@ -2,8 +2,8 @@
 // Created by Joaquin Bejar Garcia on 2/3/23.
 //
 
-#ifndef CPP_REDIS_BASE_CLIENT_H
-#define CPP_REDIS_BASE_CLIENT_H
+#ifndef SIMPLE_REDIS_CLIENT_H
+#define SIMPLE_REDIS_CLIENT_H
 
 #include <hiredis/hiredis.h>
 #include <hiredis.h>
@@ -21,8 +21,6 @@ namespace simple_redis {
     class RedisAccessViolation : public std::exception {
     public:
         explicit RedisAccessViolation( simple_logger::Logger &logger, const std::string &message);
-
-//        [[nodiscard]] const char *what() const noexcept override;
     };
 
     class RedisClient {
@@ -30,26 +28,20 @@ namespace simple_redis {
         // Constructor
         explicit RedisClient(RedisConfig &config);
 
-//        // Destructor
-//        ~RedisClient();
-//
-//        // Copy constructor
-//        RedisClient(const RedisClient &other);
-//
-//        // Move constructor
-//        RedisClient(RedisClient &&other) noexcept;
-//
-//        // Copy assignment operator
-//        RedisClient &operator=(const RedisClient &other);
-//
-//        // Move assignment operator
-//        RedisClient &operator=(RedisClient &&other) noexcept;
-//
-//        // Equality operator
-//        bool operator==(const RedisClient &rhs) const;
-//
-//        // Inequality operator
-//        bool operator!=(const RedisClient &rhs) const;
+        // Destructor
+        ~RedisClient() = default;
+
+        // Copy constructor
+        RedisClient(const RedisClient &other) = delete;
+
+        // Move constructor
+        RedisClient(RedisClient &&other) noexcept = delete;
+
+        // Copy assignment operator
+        RedisClient &operator=(const RedisClient &other) = delete;
+
+        // Move assignment operator
+        RedisClient &operator=(RedisClient &&other) noexcept = delete;
 
         bool is_connected();
 
@@ -99,4 +91,4 @@ namespace simple_redis {
     };
 
 }
-#endif //CPP_REDIS_BASE_CLIENT_H
+#endif //SIMPLE_REDIS_CLIENT_H

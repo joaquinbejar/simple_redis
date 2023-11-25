@@ -19,56 +19,6 @@ namespace simple_redis {
         }
     }
 
-//    RedisClient::~RedisClient() {
-//        if (!this->m_config.is_moved()) {
-//            this->m_config.logger->send<simple_logger::LogLevel::DEBUG>("RedisDB client destructor");
-//        }
-//
-//    }
-//
-//    RedisClient::RedisClient(const RedisClient &other) {
-//        m_config.logger->send<simple_logger::LogLevel::DEBUG>("RedisDB client copy constructor");
-//        if (this == &other) {
-//            m_config.logger->send<simple_logger::LogLevel::DEBUG>("This and other are the same");
-//            return;
-//        }
-//        this->m_config = other.m_config;
-//    }
-//
-//    RedisClient::RedisClient(RedisClient &&other) noexcept {
-//        if (this == &other) {
-//            return;
-//        }
-//        this->m_config = std::move(other.m_config);
-//    }
-//
-//    RedisClient &RedisClient::operator=(const RedisClient &other) {
-//        if (this == &other) {
-//            return *this;
-//        }
-//        this->m_config = other.m_config;
-//        return *this;
-//    }
-//
-//    RedisClient &RedisClient::operator=(RedisClient &&other) noexcept {
-//        if (this == &other) {
-//            return *this;
-//        }
-//        this->m_config = std::move(other.m_config);
-//        return *this;
-//    }
-//
-//    bool RedisClient::operator==(const RedisClient &rhs) const {
-//        if (this->m_config != rhs.m_config) {
-//            return false;
-//        }
-//        return true;
-//    }
-//
-//    bool RedisClient::operator!=(const RedisClient &rhs) const {
-//        return !(rhs == *this);
-//    }
-
     void RedisClient::connect() {
         if (!this->m_config.validate()) {
             this->m_config.logger->send<simple_logger::LogLevel::ERROR>(

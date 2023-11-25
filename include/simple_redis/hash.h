@@ -2,8 +2,8 @@
 // Created by Joaquin Bejar Garcia on 2/3/23.
 //
 
-#ifndef CPP_REDIS_BASE_HASH_H
-#define CPP_REDIS_BASE_HASH_H
+#ifndef SIMPLE_REDIS_HASH_H
+#define SIMPLE_REDIS_HASH_H
 
 #include <nlohmann/json.hpp>
 
@@ -36,4 +36,4 @@ namespace simple_redis {
 
     };
 }
-#endif //CPP_REDIS_BASE_HASH_H
+#endif //SIMPLE_REDIS_HASH_H
