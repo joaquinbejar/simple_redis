@@ -13,8 +13,6 @@
 
 namespace simple_redis {
 
-//    using json = nlohmann::json;
-
     class RedisConfig : public simple_config::Config {
     private:
         static ClusterConnectionOptions m_set_connection_options();
@@ -31,10 +29,6 @@ namespace simple_redis {
         std::shared_ptr<simple_logger::Logger> logger = std::make_shared<simple_logger::Logger>(loglevel);
         std::shared_ptr<ClusterConnectionOptions> connection_options = std::make_shared<ClusterConnectionOptions>(
                 m_set_connection_options());
-
-
-
-
     };
 }
 #endif //SIMPLE_REDIS_CONFIG_H

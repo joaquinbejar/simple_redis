@@ -7,7 +7,7 @@
 
 #include <hiredis/hiredis.h>
 #include <hiredis.h>
-#include <nlohmann/json.hpp>
+//#include <nlohmann/json.hpp>
 #include <sw/redis++/redis++.h>
 #include <simple_redis/config.h>
 #include <set>
@@ -18,14 +18,11 @@
 
 namespace simple_redis {
 
-    using json = nlohmann::json;
-
     class RedisAccessViolation : public std::exception {
     public:
-        explicit RedisAccessViolation(const std::string &message);
+        explicit RedisAccessViolation( simple_logger::Logger &logger, const std::string &message);
 
-    private:
-        std::string m_message;
+//        [[nodiscard]] const char *what() const noexcept override;
     };
 
     class RedisClient {

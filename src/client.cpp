@@ -6,9 +6,7 @@
 
 namespace simple_redis {
 
-    // TODO: Add a logger to the RedisAccessViolation exception
-    RedisAccessViolation::RedisAccessViolation(const std::string &message) : m_message(message) {
-        simple_logger::Logger logger("error");
+    RedisAccessViolation::RedisAccessViolation(simple_logger::Logger &logger, const std::string &message) {
         logger.send<simple_logger::LogLevel::ERROR>(message);
     }
 
@@ -367,7 +365,8 @@ namespace simple_redis {
                 return false;
             }
         } catch (const std::exception &e) {
-            throw RedisAccessViolation("RedisDB check_servers failed: " + std::string(e.what()));
+            throw RedisAccessViolation(*this->m_config.logger,
+                                       "RedisDB check_servers failed: " + std::string(e.what()));
         }
         return true;
     }

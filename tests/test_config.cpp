@@ -1,8 +1,6 @@
 //
 // Created by Joaquin Bejar Garcia on 15/2/23.
 //
-
-//#include <simple_config/config.h>
 #include <catch2/catch_test_macros.hpp>
 #include <simple_redis/config.h>
 
