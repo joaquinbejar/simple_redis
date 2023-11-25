@@ -1,0 +1,60 @@
+version: '3.8'
+
+# Create the cluster after the containers are up
+# redis-cli -a ${REDISPASS} --cluster-yes --cluster create ${REDIS_HOSTNAME}:7001 ${REDIS_HOSTNAME}:7002 ${REDIS_HOSTNAME}:7003 ${REDIS_HOSTNAME}:7004 ${REDIS_HOSTNAME}:7005 ${REDIS_HOSTNAME}:7006 --cluster-replicas 1
+services:
+
+  redis-master1:
+    image: redis:7.2.3
+    container_name: simple_redis_redis_master1
+    environment:
+        - REDISPASS=${REDISPASS}
+    command: [ "redis-server", "--bind", "0.0.0.0", "--port", "7001", "--tcp-backlog", "511", "--protected-mode", "no", "--appendonly", "yes", "--cluster-enabled", "yes", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--requirepass", "${REDISPASS}", "--masterauth", "${REDISPASS}" ]
+    network_mode: host
+
+  redis-master2:
+    image: redis:7.2.3
+    environment:
+      - REDISPASS=${REDISPASS}
+    container_name: simple_redis_redis_master2
+    command: [ "redis-server", "--bind", "0.0.0.0", "--port", "7002", "--tcp-backlog", "511", "--protected-mode", "no", "--appendonly", "yes", "--cluster-enabled", "yes", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--requirepass", "${REDISPASS}", "--masterauth", "${REDISPASS}" ]
+    network_mode: host
+
+  redis-master3:
+    image: redis:7.2.3
+    environment:
+      - REDISPASS=${REDISPASS}
+    container_name: simple_redis_redis_master3
+    command: [ "redis-server", "--bind", "0.0.0.0", "--port", "7003", "--tcp-backlog", "511", "--protected-mode", "no", "--appendonly", "yes", "--cluster-enabled", "yes", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--requirepass", "${REDISPASS}", "--masterauth", "${REDISPASS}" ]
+    network_mode: host
+
+  redis-slave1:
+    image: redis:7.2.3
+    environment:
+      - REDISPASS=${REDISPASS}
+    container_name: simple_redis_redis_slave1
+    command: [ "redis-server", "--bind", "0.0.0.0", "--port", "7004", "--tcp-backlog", "511", "--protected-mode", "no", "--appendonly", "yes", "--cluster-enabled", "yes", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--requirepass", "${REDISPASS}", "--masterauth", "${REDISPASS}" ]
+    network_mode: host
+    depends_on:
+      - redis-master1
+
+  redis-slave2:
+    image: redis:7.2.3
+    environment:
+      - REDISPASS=${REDISPASS}
+    container_name: simple_redis_redis_slave2
+    command: [ "redis-server", "--bind", "0.0.0.0", "--port", "7005", "--tcp-backlog", "511", "--protected-mode", "no", "--appendonly", "yes", "--cluster-enabled", "yes", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--requirepass", "${REDISPASS}", "--masterauth", "${REDISPASS}" ]
+    network_mode: host
+    depends_on:
+      - redis-master2
+
+  redis-slave3:
+    image: redis:7.2.3
+    environment:
+      - REDISPASS=${REDISPASS}
+    container_name: simple_redis_redis_slave3
+    command: [ "redis-server", "--bind", "0.0.0.0", "--port", "7006", "--tcp-backlog", "511", "--protected-mode", "no", "--appendonly", "yes", "--cluster-enabled", "yes", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--requirepass", "${REDISPASS}", "--masterauth", "${REDISPASS}" ]
+    network_mode: host
+    depends_on:
+      - redis-master3
+
