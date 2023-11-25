@@ -12,12 +12,8 @@
 
 namespace simple_redis {
 
-    using json = nlohmann::json;
-
-
     class HashRedisClient : public RedisClient {
     public:
-        // Constructor
         explicit HashRedisClient(RedisConfig &config);
 
         bool set(std::string &hash_key, const std::string &key, const std::string &value);

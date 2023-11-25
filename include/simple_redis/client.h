@@ -65,10 +65,10 @@ namespace simple_redis {
 
         std::vector<sw::redis::Redis> get_slaves_nodes();
 
-        std::vector<std::string> get_keys_in_node(const std::pair<std::string, std::string> &node);
+        std::vector<std::string> get_keys_in_node(const std::pair<std::string, std::string> &node) const;
 
         std::vector<std::string>
-        get_keys_in_node(const std::pair<std::string, std::string> &node, const std::string &pattern);
+        get_keys_in_node(const std::pair<std::string, std::string> &node, const std::string &pattern) const;
 
         std::vector<std::string> keys();
 

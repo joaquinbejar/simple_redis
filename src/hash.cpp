@@ -6,7 +6,6 @@
 
 namespace simple_redis {
 
-
     HashRedisClient::HashRedisClient(RedisConfig &config) : RedisClient(config) {
         this->m_config.logger->send<simple_logger::LogLevel::DEBUG>("HashRedisClient constructor");
     }

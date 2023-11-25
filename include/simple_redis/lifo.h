@@ -9,11 +9,9 @@
 
 namespace simple_redis {
 
-    using json = nlohmann::json;
-
     class LIFORedisClient : public FIFORedisClient {
     public:
-        // Constructor
+
         explicit LIFORedisClient(RedisConfig &config);
 
         std::string get(const std::string &key) override;

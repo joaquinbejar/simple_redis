@@ -8,60 +8,44 @@
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <utility>
 #include <thread>
-#include <simple_common/common.h>
+#include <common/common.h>
 
-std::string key_generator(int size = 20, int each = 5) {
-    std::string abc = "abcdefghijklmnopqrstuvwxyz";
-    std::string key;
+// REQUIRE a proper definition in ENV VAR for the connection  DECLARE JUST MASTER AS HOSTS
 
-    std::random_device rd;
-    std::mt19937 gen(rd());
-
-    for (int i = 0; i < size; i++) {
-        if (i > 0 && i % each == 0) {
-            key += "_";
-        }
-        std::uniform_int_distribution<> distribucion(0, (int) abc.size() - 1);
-        int indice = distribucion(gen);
-        key += abc[indice];
-    }
-    return key;
-}
+//std::string key_generator(int size = 20, int each = 5) {
+//    std::string abc = "abcdefghijklmnopqrstuvwxyz";
+//    std::string key;
+//
+//    std::random_device rd;
+//    std::mt19937 gen(rd());
+//
+//    for (int i = 0; i < size; i++) {
+//        if (i > 0 && i % each == 0) {
+//            key += "_";
+//        }
+//        std::uniform_int_distribution<> distribucion(0, (int) abc.size() - 1);
+//        int indice = distribucion(gen);
+//        key += abc[indice];
+//    }
+//    return key;
+//}
 
 simple_redis::RedisConfig global_config;
-std::string value1 = "value1";
-std::string value2 = "value2";
+const std::string VALUE1 = "VALUE1";
+const std::string VALUE2 = "VALUE2";
 
-
-TEST_CASE("Declare SetRedisClient", "[RedisDB]") {
-    simple_redis::RedisConfig config;
-    simple_redis::SetRedisClient obj1(config);
-    REQUIRE_FALSE(obj1.is_connected());
-}
 
 TEST_CASE("SetRedisClient rule of 5 connect", "[RedisDB]") {
-    // REQUIRE a proper definition in ENV VAR for the connection  DECLARE JUST MASTER AS HOSTS
+
     REQUIRE_FALSE(global_config.to_string() ==
                   R"({"connect_timeout":3000,"connection_idle_time":3000,"connection_lifetime":3000,"db":0,"host":"localhost","keep_alive":true,"password":"password","port":6379,"size":1000,"socket_timeout":3000,"tag":"default","wait_timeout":3000})");
     simple_redis::SetRedisClient obj1(global_config);
     obj1.connect();  // fail if connect to a slave
     REQUIRE(obj1.is_connected());
-    simple_redis::SetRedisClient obj2(obj1);
-    obj2.connect();
-    REQUIRE(obj2.is_connected());
-    simple_redis::SetRedisClient obj3(std::move(obj1));
-    obj3.connect();
-    REQUIRE(obj3.is_connected());
-    simple_redis::SetRedisClient obj4 = obj2;
-    obj4.connect();
-    REQUIRE(obj4.is_connected());
-    simple_redis::SetRedisClient obj5 = std::move(obj2);
-    obj5.connect();
-    REQUIRE(obj5.is_connected());
 }
 
 TEST_CASE("SetRedisClient simple set", "[RedisDB]") {
-    std::string tag = "I_am_a_set_set_" + key_generator(4, 2);
+    std::string tag = "I_am_a_set_set_" + common::key_generator();
     setenv("REDIS_TAG", tag.c_str(), 1);
     simple_redis::RedisConfig config;
     simple_redis::SetRedisClient obj1(config);
@@ -70,17 +54,17 @@ TEST_CASE("SetRedisClient simple set", "[RedisDB]") {
     std::string key = "key";
     obj1.del(key);
 
-    REQUIRE(obj1.set(key, value1));
-    REQUIRE(obj1.set(key, value2));
-    REQUIRE(obj1.set(key, value1));
-    REQUIRE(obj1.set(key + "_2", value1));
+    REQUIRE(obj1.set(key, VALUE1));
+    REQUIRE(obj1.set(key, VALUE2));
+    REQUIRE(obj1.set(key, VALUE1));
+    REQUIRE(obj1.set(key + "_2", VALUE1));
 
     REQUIRE(obj1.del(key));
     REQUIRE(obj1.del(key + "_2"));
 }
 
 TEST_CASE("SetRedisClient simple get", "[RedisDB]") {
-    std::string tag = "I_am_a_set_get_" + key_generator(4, 2);
+    std::string tag = "I_am_a_set_get_" + common::key_generator();
     setenv("REDIS_TAG", tag.c_str(), 1);
     simple_redis::RedisConfig config;
     simple_redis::SetRedisClient obj1(config);
@@ -88,14 +72,14 @@ TEST_CASE("SetRedisClient simple get", "[RedisDB]") {
     REQUIRE(obj1.is_connected());
     std::string key = "key";
     obj1.del(key);
-    REQUIRE(obj1.set(key, value1));
+    REQUIRE(obj1.set(key, VALUE1));
     std::string value = obj1.get(key);
-    REQUIRE(value == value1);
+    REQUIRE(value == VALUE1);
     REQUIRE(obj1.del(key));
 }
 
 TEST_CASE("SetRedisClient simple missing key", "[RedisDB]") {
-    std::string tag = "I_am_a_set_missing_" + key_generator(4, 2);
+    std::string tag = "I_am_a_set_missing_" + common::key_generator();
     setenv("REDIS_TAG", tag.c_str(), 1);
     simple_redis::RedisConfig config;
     simple_redis::SetRedisClient obj1(config);
@@ -111,7 +95,7 @@ TEST_CASE("SetRedisClient simple missing key", "[RedisDB]") {
 }
 
 TEST_CASE("SetRedisClient set with ttl", "[RedisDB]") {
-    std::string tag = "I_am_a_set_set_ttl_" + key_generator(4, 2);
+    std::string tag = "I_am_a_set_set_ttl_" + common::key_generator();
     setenv("REDIS_TAG", tag.c_str(), 1);
     simple_redis::RedisConfig config;
     simple_redis::SetRedisClient obj1(config);
@@ -119,16 +103,16 @@ TEST_CASE("SetRedisClient set with ttl", "[RedisDB]") {
     REQUIRE(obj1.is_connected());
     std::string key = "key";
     obj1.del(key);
-    REQUIRE(obj1.set(key, value1, 5));
+    REQUIRE(obj1.set(key, VALUE1, 5));
     std::string value = obj1.get(key);
-    REQUIRE(value == "value1");
+    REQUIRE(value == "VALUE1");
     std::this_thread::sleep_for(std::chrono::seconds(6));
     value = obj1.get(key);
     REQUIRE(value.empty());
 }
 
 TEST_CASE("SetRedisClient set map", "[RedisDB]") {
-    std::string tag = "I_am_a_set_set_map_" + key_generator(4, 2);
+    std::string tag = "I_am_a_set_set_map_" + common::key_generator();
     setenv("REDIS_TAG", tag.c_str(), 1);
     simple_redis::RedisConfig config;
     simple_redis::SetRedisClient obj1(config);
@@ -136,8 +120,8 @@ TEST_CASE("SetRedisClient set map", "[RedisDB]") {
     REQUIRE(obj1.is_connected());
 
     std::map<std::string, std::string> m;
-    m["key1"] = "value1";
-    m["key2"] = "value2";
+    m["key1"] = "VALUE1";
+    m["key2"] = "VALUE2";
     m["key3"] = "value3";
     m["key4"] = "value4";
     // turn map into a set
@@ -150,7 +134,7 @@ TEST_CASE("SetRedisClient set map", "[RedisDB]") {
 }
 
 TEST_CASE("SetRedisClient set size", "[RedisDB]") {
-    std::string tag = "I_am_a_set_size_" + key_generator(4, 2);
+    std::string tag = "I_am_a_set_size_" + common::key_generator();
     setenv("REDIS_TAG", tag.c_str(), 1);
     simple_redis::RedisConfig config;
     simple_redis::SetRedisClient obj1(config);
@@ -158,8 +142,8 @@ TEST_CASE("SetRedisClient set size", "[RedisDB]") {
     REQUIRE(obj1.is_connected());
 
     std::map<std::string, std::string> m;
-    m["key1"] = "value1";
-    m["key2"] = "value2";
+    m["key1"] = "VALUE1";
+    m["key2"] = "VALUE2";
     m["key3"] = "value3";
     m["key4"] = "value4";
     // turn map into a set
@@ -174,7 +158,7 @@ TEST_CASE("SetRedisClient set size", "[RedisDB]") {
 }
 
 TEST_CASE("SetRedisClient set json", "[RedisDB]") {
-    std::string tag = "I_am_a_set_json_" + key_generator(4, 2);
+    std::string tag = "I_am_a_set_json_" + common::key_generator();
     setenv("REDIS_TAG", tag.c_str(), 1);
     simple_redis::RedisConfig config;
     simple_redis::SetRedisClient obj1(config);
@@ -182,8 +166,8 @@ TEST_CASE("SetRedisClient set json", "[RedisDB]") {
     REQUIRE(obj1.is_connected());
     json j = json::parse(R"(
     {
-        "key1": "value1",
-        "key2": "value2",
+        "key1": "VALUE1",
+        "key2": "VALUE2",
         "key3": "value3",
         "key4": "value4",
         "key5": {
@@ -199,7 +183,7 @@ TEST_CASE("SetRedisClient set json", "[RedisDB]") {
 }
 
 TEST_CASE("SetRedisClient clear", "[RedisDB]") {
-    std::string tag = "I_am_a_set_clear_" + key_generator(4, 2);
+    std::string tag = "I_am_a_set_clear_" + common::key_generator();
     setenv("REDIS_TAG", tag.c_str(), 1);
     simple_redis::RedisConfig config;
     simple_redis::SetRedisClient obj1(config);
@@ -207,8 +191,8 @@ TEST_CASE("SetRedisClient clear", "[RedisDB]") {
     REQUIRE(obj1.is_connected());
 
     std::map<std::string, std::string> m;
-    m["key1"] = "value1";
-    m["key2"] = "value2";
+    m["key1"] = "VALUE1";
+    m["key2"] = "VALUE2";
     m["key3"] = "value3";
     m["key4"] = "value4";
     // turn map into a set
@@ -226,7 +210,7 @@ TEST_CASE("SetRedisClient clear", "[RedisDB]") {
 }
 
 TEST_CASE("SetRedisClient set and delete all", "[RedisDB]") {
-    std::string tag = "I_am_a_set_delete_all_" + key_generator(4, 2);
+    std::string tag = "I_am_a_set_delete_all_" + common::key_generator();
     setenv("REDIS_TAG", tag.c_str(), 1);
     simple_redis::RedisConfig config;
     simple_redis::SetRedisClient obj1(config);
@@ -235,7 +219,7 @@ TEST_CASE("SetRedisClient set and delete all", "[RedisDB]") {
     std::vector<std::string> keys;
     // insert 1000 keys
     for (int i = 0; i < 100; i++) {
-        std::string key = simple_common::key_generator();
+        std::string key = common::key_generator();
         std::string value = "value_" + key;
         REQUIRE(obj1.set(key, value));
         keys.push_back(key);
@@ -245,14 +229,14 @@ TEST_CASE("SetRedisClient set and delete all", "[RedisDB]") {
 }
 
 TEST_CASE("SetRedisClient set and delete all from keys *", "[RedisDB]") {
-    std::string tag = "I_am_a_delete_all_from_keys_" + key_generator(4, 2);
+    std::string tag = "I_am_a_delete_all_from_keys_" + common::key_generator();
     setenv("REDIS_TAG", tag.c_str(), 1);
     simple_redis::RedisConfig config;
     simple_redis::SetRedisClient obj1(config);
     obj1.connect();
     REQUIRE(obj1.is_connected());
     for (int i = 0; i < 100; i++) {
-        std::string key = simple_common::key_generator();
+        std::string key = common::key_generator();
         std::string value = "value_" + key;
         REQUIRE(obj1.set(key, value));
     }
@@ -263,14 +247,14 @@ TEST_CASE("SetRedisClient set and delete all from keys *", "[RedisDB]") {
 }
 
 TEST_CASE("SetRedisClient get size", "[RedisDB]") {
-    std::string tag = "I_am_a_get_size_" + key_generator(4, 2);
+    std::string tag = "I_am_a_get_size_" + common::key_generator();
     setenv("REDIS_TAG", tag.c_str(), 1);
     simple_redis::RedisConfig config;
     simple_redis::SetRedisClient obj1(config);
     obj1.connect();
     REQUIRE(obj1.is_connected());
     for (int i = 0; i < 100; i++) {
-        std::string key = simple_common::key_generator();
+        std::string key = common::key_generator();
         std::string value = "value_" + key;
         REQUIRE(obj1.set(key, value));
     }

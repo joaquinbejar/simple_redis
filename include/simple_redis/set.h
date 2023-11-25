@@ -7,11 +7,7 @@
 
 #include <simple_redis/client.h>
 
-
-
 namespace simple_redis {
-
-    using json = nlohmann::json;
 
     class SetRedisClient : public RedisClient {
     public:
@@ -30,9 +26,11 @@ namespace simple_redis {
 
         std::string get(const std::string &&key, const std::string &default_value = "");
 
-        std::map<std::string, std::string> get(const std::vector<std::string> &keys, const std::string &default_value = "");
+        std::map<std::string, std::string>
+        get(const std::vector<std::string> &keys, const std::string &default_value = "");
 
-        std::map<std::string, std::string> get(const std::vector<std::string> &&keys, const std::string &default_value = "");
+        std::map<std::string, std::string>
+        get(const std::vector<std::string> &&keys, const std::string &default_value = "");
 
         std::vector<std::string> get_keys();
 

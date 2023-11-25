@@ -9,8 +9,6 @@
 
 namespace simple_redis {
 
-    using json = nlohmann::json;
-
     class FIFORedisClient : public RedisClient {
     public:
         // Constructor

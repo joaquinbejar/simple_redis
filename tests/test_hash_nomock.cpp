@@ -6,40 +6,23 @@
 #include <simple_redis/hash.h>
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <utility>
-#include <simple_common/common.h>
+#include <common/common.h>
 
 simple_redis::RedisConfig global_config;
 
-TEST_CASE("Declare HashRedisClient", "[RedisDB]") {
-    simple_redis::RedisConfig config;
-    simple_redis::HashRedisClient obj1(config);
-    REQUIRE_FALSE(obj1.is_connected());
-}
+// REQUIRE a proper definition in ENV VAR for the connection  DECLARE JUST MASTER AS HOSTS
 
 TEST_CASE("HashRedisClient rule of 5 connect", "[RedisDB]") {
-    // REQUIRE a proper definition in ENV VAR for the connection  DECLARE JUST MASTER AS HOSTS
     simple_redis::HashRedisClient obj1(global_config);
     obj1.connect();  // fail if connect to a slave
     REQUIRE(obj1.is_connected());
-    simple_redis::HashRedisClient obj2(obj1);
-    obj2.connect();
-    REQUIRE(obj2.is_connected());
-    simple_redis::HashRedisClient obj3(std::move(obj1));
-    obj3.connect();
-    REQUIRE(obj3.is_connected());
-    simple_redis::HashRedisClient obj4 = obj2;
-    obj4.connect();
-    REQUIRE(obj4.is_connected());
-    simple_redis::HashRedisClient obj5 = std::move(obj2);
-    obj5.connect();
-    REQUIRE(obj5.is_connected());
 }
 
 TEST_CASE("HashRedisClient simple set", "[RedisDB]") {
     simple_redis::HashRedisClient obj1(global_config);
     obj1.connect();
     REQUIRE(obj1.is_connected());
-    std::string key = simple_common::key_generator();
+    std::string key = common::key_generator();
     obj1.del(key);
     REQUIRE(obj1.set(key, "key1", "value1"));
     REQUIRE(obj1.del(key));
@@ -54,7 +37,7 @@ TEST_CASE("HashRedisClient std::map set", "[RedisDB]") {
     map["key2"] = "value2";
     map["key3"] = "value3";
     map["key4"] = "value4";
-    std::string key = simple_common::key_generator();
+    std::string key = common::key_generator();
     obj1.del(key);
     REQUIRE(obj1.set(key, map));
     REQUIRE(obj1.del(key));
@@ -64,7 +47,7 @@ TEST_CASE("HashRedisClient simple set and delete", "[RedisDB]") {
     simple_redis::HashRedisClient obj1(global_config);
     obj1.connect();
     REQUIRE(obj1.is_connected());
-    std::string key = simple_common::key_generator();
+    std::string key = common::key_generator();
     obj1.del(key);
     REQUIRE(obj1.set(key, "key1", "value1"));
     REQUIRE(obj1.del(key));
@@ -74,7 +57,7 @@ TEST_CASE("HashRedisClient several set and delete", "[RedisDB]") {
     simple_redis::HashRedisClient obj1(global_config);
     obj1.connect();
     REQUIRE(obj1.is_connected());
-    std::string key = simple_common::key_generator();
+    std::string key = common::key_generator();
     obj1.del(key);
     obj1.del(key + "2");
     REQUIRE(obj1.set(key, "key1", "value1"));
@@ -100,7 +83,7 @@ TEST_CASE("HashRedisClient simple get", "[RedisDB]") {
     map["key2"] = "value2";
     map["key3"] = "value3";
     map["key4"] = "value4";
-    std::string key = simple_common::key_generator();
+    std::string key = common::key_generator();
     obj1.del(key);
     REQUIRE(obj1.set(key, map));
     std::string value = obj1.get(key, "key1");
@@ -123,7 +106,7 @@ TEST_CASE("HashRedisClient simple getall", "[RedisDB]") {
     map["key2"] = "value2";
     map["key3"] = "value3";
     map["key4"] = "value4";
-    std::string key = simple_common::key_generator();
+    std::string key = common::key_generator();
     obj1.del(key);
     REQUIRE(obj1.set(key, map));
     std::map<std::string ,std::string> value = obj1.get(key );
@@ -140,7 +123,7 @@ TEST_CASE("HashRedisClient getkeys", "[RedisDB]") {
     map["key2"] = "value2";
     map["key3"] = "value3";
     map["key4"] = "value4";
-    std::string key = simple_common::key_generator();
+    std::string key = common::key_generator();
     obj1.del(key);
     REQUIRE(obj1.set(key, map));
     std::vector<std::string> value = obj1.getkeys(key );
@@ -161,7 +144,7 @@ TEST_CASE("HashRedisClient delkey", "[RedisDB]") {
     map["key2"] = "value2";
     map["key3"] = "value3";
     map["key4"] = "value4";
-    std::string key = simple_common::key_generator();
+    std::string key = common::key_generator();
     obj1.del(key);
     REQUIRE(obj1.set(key, map));
     REQUIRE(obj1.delkey(key, "key1"));

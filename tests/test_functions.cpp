@@ -6,7 +6,7 @@
 #include <simple_redis/basic.h>
 #include <simple_redis/config.h>
 #include <catch2/benchmark/catch_benchmark.hpp>
-#include <utility>
+
 
 simple_redis::RedisConfig global_config;
 

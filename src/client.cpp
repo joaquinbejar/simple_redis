@@ -220,7 +220,7 @@ namespace simple_redis {
         auto masters = get_cluster_nodes_master();
         std::vector<sw::redis::Redis> result;
         for (auto &master: masters) {
-            sw::redis::ConnectionOptions connection_options = *m_config.connection_options;
+            ClusterConnectionOptions connection_options = *m_config.connection_options;
             connection_options.host = master.first;
             connection_options.port = std::stoi(master.second);
             if (common::ip::is_ip(connection_options.host) &&
@@ -234,7 +234,7 @@ namespace simple_redis {
         auto slaves = get_cluster_nodes_slave();
         std::vector<sw::redis::Redis> result;
         for (auto &master: slaves) {
-            sw::redis::ConnectionOptions connection_options = *m_config.connection_options;
+            ClusterConnectionOptions connection_options = *m_config.connection_options;
             connection_options.host = master.first;
             connection_options.port = std::stoi(master.second);
             if (common::ip::is_ip(connection_options.host) &&
@@ -244,15 +244,15 @@ namespace simple_redis {
         return result;
     }
 
-    std::vector<std::string> RedisClient::get_keys_in_node(const std::pair<std::string, std::string> &node) {
+    std::vector<std::string> RedisClient::get_keys_in_node(const std::pair<std::string, std::string> &node) const {
         return get_keys_in_node(node, "*");
     }
 
     std::vector<std::string>
-    RedisClient::get_keys_in_node(const std::pair<std::string, std::string> &node, const std::string &pattern) {
+    RedisClient::get_keys_in_node(const std::pair<std::string, std::string> &node, const std::string &pattern) const {
         std::vector<std::string> keys;
         try {
-            sw::redis::ConnectionOptions connection_options;
+            ClusterConnectionOptions connection_options;
             connection_options = *m_config.connection_options;
             if (node.first.empty() || node.second.empty())
                 return keys;
