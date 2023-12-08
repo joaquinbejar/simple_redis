@@ -61,7 +61,7 @@ namespace simple_redis {
                 this->logger->setLevel(j["loglevel"].get<std::string>());
             }
         } catch (std::exception &e) {
-            logger->send<simple_logger::LogLevel::ERROR>("Error parsing RedisConfig: " + std::string(e.what()));
+            logger->send<simple_logger::LogLevel::CRITICAL>("Error parsing RedisConfig: " + std::string(e.what()));
             throw std::runtime_error("Error parsing RedisConfig: " + std::string(e.what()));
         }
     }
