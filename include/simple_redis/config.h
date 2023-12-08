@@ -11,7 +11,7 @@
 #include <sw/redis++/redis++.h>
 #include <simple_redis/basic.h>
 
-namespace simple_redis {
+    namespace simple_redis {
 
     class RedisConfig : public simple_config::Config {
     private:
