@@ -4,6 +4,9 @@ if (CMAKE_DEBUG)
     message(STATUS "simple_redis/tests SIMPLE_LOGGER_INCLUDE: ${SIMPLE_LOGGER_INCLUDE}")
     message(STATUS "simple_redis/tests NLOHMANN_JSON_INCLUDE: ${NLOHMANN_JSON_INCLUDE}")
     message(STATUS "simple_redis/tests COMMON_INCLUDE: ${COMMON_INCLUDE}")
+    message(STATUS "simple_redis/tests REDISCPP_HEADER: ${REDISCPP_HEADER}")
+    message(STATUS "simple_redis/tests REDISCPP_HEADER17: ${REDISCPP_HEADER17}")
+    message(STATUS "simple_redis/tests REDISCPP_HEADERTLS: ${REDISCPP_HEADERTLS}")
 endif ()
 
 

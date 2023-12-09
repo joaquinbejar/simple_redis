@@ -61,7 +61,7 @@ target_include_directories(simple_redis PUBLIC
         ${SIMPLE_LOGGER_INCLUDE}
         ${NLOHMANN_JSON_INCLUDE}
         ${COMMON_INCLUDE}
-#        ${REDISCPP_HEADER}
+        ${REDISCPP_HEADER}
 #        ${REDISCPP_HEADER17}
 #        ${REDISCPP_HEADERTLS}
         ${HIREDIS_HEADER}
