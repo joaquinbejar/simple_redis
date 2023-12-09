@@ -1,22 +1,3 @@
-#find_path(REDISCPP_HEADER
-#        NAMES sw/redis++/redis++.h
-#        PATHS /usr/local/include
-#        REQUIRED
-#        )
-#
-#find_library(REDISCPP_LIB
-#        NAMES redis++
-#        HINTS /usr/local/lib/
-#        REQUIRED
-#        )
-#
-#if (REDISCPP_HEADER AND REDISCPP_LIB)
-#    message(STATUS "ROOT/REDIS REDISCPP FOUND")
-#    message(STATUS "ROOT/REDIS FOUND REDISCPP_HEADER ${REDISCPP_HEADER}")
-#    message(STATUS "ROOT/REDIS FOUND REDISCPP_LIB ${REDISCPP_LIB}")
-#endif ()
-
-
 include(FetchContent)
 FetchContent_Declare(rediscpp
         GIT_REPOSITORY https://github.com/sewenew/redis-plus-plus.git
@@ -34,6 +15,6 @@ set(REDISCPP_LIB "${rediscpp_BINARY_DIR}/libredis++.a" CACHE INTERNAL "")
 set(TEST_REDISCPP_LIB "${rediscpp_BINARY_DIR}/libredis++.a" CACHE INTERNAL "")
 
 if (CMAKE_DEBUG)
-    message(STATUS "simple_mariadb/cmake rediscpp_SOURCE_DIR ${rediscpp_SOURCE_DIR}")
-    message(STATUS "simple_mariadb/cmake REDISCPP_INCLUDE ${REDISCPP_INCLUDE}")
+    message(STATUS "simple_redis/cmake rediscpp_SOURCE_DIR ${rediscpp_SOURCE_DIR}")
+    message(STATUS "simple_redis/cmake REDISCPP_INCLUDE ${REDISCPP_INCLUDE}")
 endif ()
