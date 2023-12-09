@@ -46,18 +46,6 @@ if(NOT EXISTS "${REDISCPP_LIB}")
         message(FATAL_ERROR "Error building rediscpp ${result}")
     endif ()
 
-#    execute_process(
-#            COMMAND ln -sf ${rediscpp_SOURCE_DIR} ${rediscpp_SOURCE_DIR}/src/sw/redis++/cxx_utils.h
-#            WORKING_DIRECTORY ${hiredis_SOURCE_DIR}
-#            COMMAND_ECHO STDOUT
-#            COMMAND_ECHO STDERR
-#            RESULT_VARIABLE result
-#    )
-#    if (result)
-#        message(FATAL_ERROR "Error linking cxx_utils.h ${result}")
-#    endif ()
-
-
 else()
     message(STATUS "rediscpp library found")
 endif()
