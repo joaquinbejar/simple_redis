@@ -55,9 +55,14 @@ namespace simple_redis {
     }
 
     void RedisConfig::from_json(const json &j) {
-        connection_options->from_json(j);
-        if (j.contains("loglevel")) {
-            this->logger->setLevel(j["loglevel"].get<std::string>());
+        try {
+            connection_options->from_json(j);
+            if (j.contains("loglevel")) {
+                this->logger->setLevel(j["loglevel"].get<std::string>());
+            }
+        } catch (std::exception &e) {
+            logger->send<simple_logger::LogLevel::CRITICAL>("Error parsing RedisConfig: " + std::string(e.what()));
+            throw std::runtime_error("Error parsing RedisConfig: " + std::string(e.what()));
         }
     }
 

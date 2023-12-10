@@ -46,7 +46,7 @@ namespace simple_redis {
             }
             return v_result;
         } catch (const std::exception &e) {
-            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB BRMPOP failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::DEBUG>("RedisDB BRMPOP Timeout: " + std::string(e.what()));
         }
         return {};
     }

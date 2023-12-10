@@ -51,7 +51,7 @@ namespace simple_redis {
                     this->m_config.connection_options->blocking_timeout);
             return result->second;
         } catch (const std::exception &e) {
-            this->m_config.logger->send<simple_logger::LogLevel::ERROR>("RedisDB BLPOP failed: " + std::string(e.what()));
+            this->m_config.logger->send<simple_logger::LogLevel::DEBUG>("RedisDB BLPOP Timeout: " + std::string(e.what()));
         }
         return {};
     }

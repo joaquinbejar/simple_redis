@@ -7,7 +7,6 @@
 
 #include <hiredis/hiredis.h>
 #include <hiredis.h>
-//#include <nlohmann/json.hpp>
 #include <sw/redis++/redis++.h>
 #include <simple_redis/config.h>
 #include <set>
