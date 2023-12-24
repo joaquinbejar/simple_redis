@@ -77,10 +77,6 @@ target_link_libraries(simple_redis
         ${HIREDIS_LIB}
 )
 
-
-
-
-
 set(SIMPLE_REDIS_TESTS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 option(NO_SIMPLE_REDIS_TESTS "simple_redis Disable simple_redis tests" OFF)
 if (NOT NO_SIMPLE_REDIS_TESTS)
