@@ -1,7 +1,7 @@
 include(FetchContent)
 FetchContent_Declare(rediscpp
         GIT_REPOSITORY https://github.com/sewenew/redis-plus-plus.git
-        GIT_TAG 1.3.10
+        GIT_TAG 1.3.15
         BUILD_ALWAYS 1
 )
 
@@ -47,6 +47,9 @@ set(REDISCPP_INCLUDE "${rediscpp_SOURCE_DIR}/src" CACHE INTERNAL "")
 set(REDISCPP_HEADER "${rediscpp_SOURCE_DIR}/src" CACHE INTERNAL "")
 set(REDISCPP_HEADER17 "${rediscpp_SOURCE_DIR}/src/sw/redis++/cxx17" CACHE INTERNAL "")
 set(REDISCPP_HEADERTLS "${rediscpp_SOURCE_DIR}/src/sw/redis++/no_tls" CACHE INTERNAL "")
+# redis-plus-plus >= 1.3.11 generates sw/redis++/hiredis_features.h at
+# configure time into its build tree.
+set(REDISCPP_HEADER_GENERATED "${rediscpp_BINARY_DIR}/src" CACHE INTERNAL "")
 
 if (CMAKE_DEBUG)
     message(STATUS "simple_redis/cmake rediscpp_SOURCE_DIR ${rediscpp_SOURCE_DIR}")

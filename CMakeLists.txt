@@ -13,6 +13,19 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
         add_compile_definitions(NDEBUG)
 endif()
 
+include(FetchContent)
+# Catch2 and nlohmann_json only arrive transitively through simple_logger;
+# declare them first so these pins win (FetchContent honours the first
+# declaration). common_cpp v0.1.5 pins nlohmann_json v3.11.2, whose
+# cmake_minimum_required is rejected by CMake >= 4.0.
+FetchContent_Declare(Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG v3.16.0
+)
+FetchContent_Declare(nlohmann_json
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+        GIT_TAG v3.12.0
+)
 include(cmake/hiredis.cmake)
 include(cmake/redis-plus-plus.cmake)
 include(cmake/simple_logger.cmake)
@@ -64,6 +77,7 @@ target_include_directories(simple_redis PUBLIC
         ${REDISCPP_HEADER}
         ${REDISCPP_HEADER17}
         ${REDISCPP_HEADERTLS}
+        ${REDISCPP_HEADER_GENERATED}
         ${HIREDIS_HEADER}
 )
 

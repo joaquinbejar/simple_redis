@@ -3,7 +3,7 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries" FORCE)
 
 FetchContent_Declare(hiredis
         GIT_REPOSITORY https://github.com/redis/hiredis.git
-        GIT_TAG v1.2.0
+        GIT_TAG v1.4.1
         CMAKE_ARGS -DBUILD_SHARED_LIBS=OFF
         BUILD_ALWAYS 1
 )
